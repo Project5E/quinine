@@ -15,7 +15,7 @@ internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Si
     override fun cleanUp() = cache.cleanUp()
 
     override fun invalidate(key: Any) = cache.invalidate(key)
-    override fun invalidateAll(keys: Iterable<*>) = cache.invalidateAll(keys)
+    override fun invalidateAll(keys: Iterable<K>) = cache.invalidateAll(keys)
     override fun invalidateAll() = cache.invalidateAll()
 
     override fun put(key: K, value: Single<V>) = cache.put(key, value.cache())
@@ -25,6 +25,6 @@ internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Si
 
     override fun get(key: K, mappingFunction: (K) -> Single<V>) = cache.get(key) { mappingFunction(it).cache() }!!
 
-    override fun getIfPresent(key: Any): Single<V> = cache.getIfPresent(key)!!
-    override fun getAllPresent(keys: Iterable<*>): Map<K, Single<V>> = cache.getAllPresent(keys)
+    override fun getIfPresent(key: Any): Single<V>? = cache.getIfPresent(key)
+    override fun getAllPresent(keys: Iterable<K>): Map<K, Single<V>> = cache.getAllPresent(keys)
 }

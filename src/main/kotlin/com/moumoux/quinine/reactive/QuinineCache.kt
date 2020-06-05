@@ -48,7 +48,7 @@ interface QuinineCache<K : Any, V> {
      *
      * @param keys the keys whose associated values are to be removed
      */
-    fun invalidateAll(keys: Iterable<*>)
+    fun invalidateAll(keys: Iterable<K>)
 
     /**
      * Discards all entries in the cache. The behavior of this operation is undefined for an entry
@@ -111,7 +111,7 @@ interface QuinineCache<K : Any, V> {
      * @return the value to which the specified key is mapped, or <pre>null</pre> if this cache contains
      *         no mapping for the key
      */
-    fun getIfPresent(key: Any): Single<V>
+    fun getIfPresent(key: Any): Single<V>?
 
     /**
      * Returns a map of the values associated with the [keys] in this cache. The returned map
@@ -122,7 +122,7 @@ interface QuinineCache<K : Any, V> {
      * @param keys the keys whose associated values are to be returned
      * @return the readonly mapping of keys to values for the specified keys found in this cache
      */
-    fun getAllPresent(keys: Iterable<*>): Map<K, Single<V>>
+    fun getAllPresent(keys: Iterable<K>): Map<K, Single<V>>
 
 
     /**
