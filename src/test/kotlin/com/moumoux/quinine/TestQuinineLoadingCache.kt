@@ -1,5 +1,6 @@
 package com.moumoux.quinine
 
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -58,7 +59,8 @@ class TestQuinineLoadingCache {
 
     @Test
     fun testGetAll() {
-        val indexes = List(1000) { Random.nextInt(1, 1000) }
+        val indexes = List(100) { Random.nextInt(1, 100) }
+        List(500) { Random.nextInt(1, 1000) }.forEach(cache::refresh)
         runBlocking {
             cache.getAll(indexes).forEach { (k, v) ->
                 assertEquals(Common.primes[k - 1], v)
@@ -68,7 +70,8 @@ class TestQuinineLoadingCache {
 
     @Test
     fun getAllPresent() {
-        val indexes = List(1000) { Random.nextInt(1, 1000) }
+        val indexes = List(100) { Random.nextInt(1, 100) }
+        List(500) { Random.nextInt(1, 1000) }.forEach(cache::refresh)
         runBlocking {
             cache.getAllPresent(indexes).forEach { (k, v) ->
                 assertEquals(Common.primes[k - 1], v)
