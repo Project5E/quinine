@@ -1,15 +1,16 @@
 package com.moumoux.quinine
 
 import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.LoadingCache
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
+import java.util.concurrent.Executors
 
 interface QuinineCache<K, V> {
-    fun estimatedSize(): Long
+    val stats: QuinineCacheStats
+    val estimatedSize: Long
+
     fun cleanUp()
-    // fun policy(): Policy<K, Single<V>>
-    // fun stats(): CacheStats
+
     fun invalidate(key: Any)
     fun invalidateAll(keys: Iterable<*>)
     fun invalidateAll()
@@ -18,17 +19,17 @@ interface QuinineCache<K, V> {
     fun putAll(map: Map<out K, V>)
     suspend fun get(key: K, mappingFunction: (K) -> V): V
     suspend fun getIfPresent(key: Any): V?
-    suspend fun getAllPresent(keys: MutableIterable<K>): Map<K, V>
+    suspend fun getAllPresent(keys: Iterable<*>): Map<K, V>
 }
 
-interface QuinineLoadingCache<K, V>: QuinineCache<K, V> {
-    suspend fun get(key: K): V
-    suspend fun getAll(keys: Iterable<K>): Map<K, V>
-    fun refresh(key: K)
-}
+internal open class QuinineLocalCache<K, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
+    private val loaderExecutor = Executors.newSingleThreadExecutor()
 
-internal open class QuinineLocalCache<K, V>(private val cache: Cache<K, Single<V>>): QuinineCache<K, V> {
-    override fun estimatedSize(): Long = cache.estimatedSize()
+    override val estimatedSize: Long
+        get() = cache.estimatedSize()
+    override val stats: QuinineCacheStats
+        get() = QuinineCacheStats.from(cache.stats())
+
     override fun cleanUp() = cache.cleanUp()
 
     override fun invalidate(key: Any) = cache.invalidate(key)
@@ -42,21 +43,14 @@ internal open class QuinineLocalCache<K, V>(private val cache: Cache<K, Single<V
 
     override suspend fun get(key: K, mappingFunction: (K) -> V): V {
         return cache.get(key) {
-            Single.create<V> { emitter -> emitter.onSuccess(mappingFunction(it)) }.cache()
+            Single.create<V> { emitter ->
+                loaderExecutor.execute { emitter.onSuccess(mappingFunction(it)) }
+            }.cache()
         }!!.await()
     }
+
     override suspend fun getIfPresent(key: Any): V? = cache.getIfPresent(key)?.await()
-    override suspend fun getAllPresent(keys: MutableIterable<K>): Map<K, V> =
+    override suspend fun getAllPresent(keys: Iterable<*>): Map<K, V> =
         cache.getAllPresent(keys).mapValues { it.value.await() }
-
-}
-
-internal class QuinineLocalLoadingCache<K, V>(private val cache: LoadingCache<K, Single<V>>): QuinineLocalCache<K, V>(cache), QuinineLoadingCache<K, V> {
-    override suspend fun get(key: K): V = cache.get(key)!!.await()
-
-    override suspend fun getAll(keys: Iterable<K>): Map<K, V> =
-        cache.getAll(keys).mapValues { it.value.await() }
-
-    override fun refresh(key: K) = cache.refresh(key)
 
 }

@@ -7,7 +7,7 @@ import com.moumoux.quinine.reactive.QuinineCache as rxQuinineCache
 import com.moumoux.quinine.reactive.QuinineLocalCache as rxQuinineLocalCache
 
 class Quinine<K, V> private constructor() {
-    private val caffeine = Caffeine.newBuilder()
+    private val caffeine = Caffeine.newBuilder().recordStats()
 
     companion object {
         fun newBuilder() = Quinine<Any, Any>()
@@ -22,9 +22,9 @@ class Quinine<K, V> private constructor() {
         return QuinineLocalCache(caffeine.build())
     }
 
-    fun <K1 : K?, V1 : V?> build(mappingFunction: (K1) -> V1): QuinineCache<K1, V1> {
-        return QuinineLocalLoadingCache(caffeine.build() {
-            Single.create<V1> { emitter -> emitter.onSuccess(mappingFunction(it)) }
+    fun <K1 : K?, V1 : V?> build(mappingFunction: (K1) -> V1): QuinineLoadingCache<K1, V1> {
+        return QuinineLocalLoadingCache(caffeine.build {
+            Single.create { emitter -> emitter.onSuccess(mappingFunction(it)) }
         })
     }
 
