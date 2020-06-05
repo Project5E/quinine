@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.moumoux.quinine.QuinineCacheStats
 import io.reactivex.Single
 
-interface QuinineCache<K, V> {
+interface QuinineCache<K: Any, V> {
     val stats: QuinineCacheStats
     val estimatedSize: Long
 
@@ -21,7 +21,7 @@ interface QuinineCache<K, V> {
     fun getAllPresent(keys: Iterable<*>): Map<K, Single<V>>
 }
 
-internal open class QuinineLocalCache<K, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
+internal open class QuinineLocalCache<K: Any, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
     override val estimatedSize: Long
         get() = cache.estimatedSize()
     override val stats: QuinineCacheStats
