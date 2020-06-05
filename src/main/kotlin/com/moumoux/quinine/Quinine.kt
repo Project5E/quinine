@@ -6,7 +6,7 @@ import com.moumoux.quinine.impl.QuinineLocalLoadingCache
 import io.reactivex.Single
 
 import com.moumoux.quinine.reactive.QuinineCache as rxQuinineCache
-import com.moumoux.quinine.reactive.QuinineCache as rxQuinineLoadingCache
+import com.moumoux.quinine.reactive.QuinineLoadingCache as rxQuinineLoadingCache
 import com.moumoux.quinine.reactive.impl.QuinineLocalCache as rxQuinineLocalCache
 import com.moumoux.quinine.reactive.impl.QuinineLocalLoadingCache as rxQuinineLocalLoadingCache
 
