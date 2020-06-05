@@ -1,6 +1,7 @@
 # Quinine
 
 ![build status](https://github.com/Project5E/quinine/workflows/build/badge.svg)
+[![Jitpack](https://jitpack.io/v/com.moumoux/quinine.svg)](https://jitpack.io/#com.moumoux/quinine)
 ![Kotlin 1.3.72](https://img.shields.io/badge/Kotlin-1.3.72-orange)
 
 So far, it's a Kotlin cache library using [Caffeine](https://github.com/ben-manes/caffeine)
@@ -10,6 +11,23 @@ Still, working in progress.
 
 
 ## Example
+
+Add this to `build.gradle`:
+```gradle
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+```gradle
+	dependencies {
+	        implementation 'com.moumoux:quinine:0.0.1'
+	}
+```
+
+### Usage
 
 ```kotlin
 val cache: QuinineCache<Int, Int> = Quinine
