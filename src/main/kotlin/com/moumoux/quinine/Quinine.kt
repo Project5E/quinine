@@ -33,7 +33,7 @@ import com.moumoux.quinine.reactive.QuinineLocalLoadingCache as rxQuinineLocalLo
  * @param K the most general key type this builder will be able to create caches for.
  * @param V the most general value type this builder will be able to create caches for.
  */
-class Quinine<K, V> private constructor() {
+class Quinine<K: Any, V> private constructor() {
     private val caffeine = Caffeine.newBuilder().recordStats()
 
     companion object {
@@ -61,7 +61,7 @@ class Quinine<K, V> private constructor() {
      *
      * @return [QuinineCache] instance
      */
-    fun <K1 : K?, V1 : V?> build(): QuinineCache<K1, V1> {
+    fun <K1 : K, V1 : V?> build(): QuinineCache<K1, V1> {
         return QuinineLocalCache(caffeine.build())
     }
 
@@ -70,7 +70,7 @@ class Quinine<K, V> private constructor() {
      *
      * @return [QuinineLoadingCache] instance
      */
-    fun <K1 : K?, V1 : V?> build(mappingFunction: (K1) -> V1): QuinineLoadingCache<K1, V1> {
+    fun <K1 : K, V1 : V?> build(mappingFunction: (K1) -> V1): QuinineLoadingCache<K1, V1> {
         return QuinineLocalLoadingCache(caffeine.build {
             Single.create { emitter -> emitter.onSuccess(mappingFunction(it)) }
         })
@@ -81,7 +81,7 @@ class Quinine<K, V> private constructor() {
      *
      * @return [rxQuinineCache] instance
      */
-    fun <K1 : K?, V1 : V?> rxBuild(): rxQuinineCache<K1, V1> {
+    fun <K1 : K, V1 : V?> rxBuild(): rxQuinineCache<K1, V1> {
         return rxQuinineLocalCache(caffeine.build())
     }
 
@@ -90,7 +90,7 @@ class Quinine<K, V> private constructor() {
      *
      * @return [rxQuinineLoadingCache] instance
      */
-    fun <K1 : K?, V1 : V?> rxBuild(mappingFunction: (K1) -> Single<V1>): rxQuinineLoadingCache<K1, V1> {
+    fun <K1 : K, V1 : V?> rxBuild(mappingFunction: (K1) -> Single<V1>): rxQuinineLoadingCache<K1, V1> {
         return rxQuinineLocalLoadingCache(caffeine.build(mappingFunction))
     }
 
