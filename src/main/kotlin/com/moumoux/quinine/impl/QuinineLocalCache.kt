@@ -1,11 +1,14 @@
-package com.moumoux.quinine
+package com.moumoux.quinine.impl
 
 import com.github.benmanes.caffeine.cache.Cache
+import com.moumoux.quinine.QuinineCache
+import com.moumoux.quinine.QuinineCacheStats
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
 import java.util.concurrent.Executors
 
-internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
+internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Single<V>>) :
+    QuinineCache<K, V> {
     private val loaderExecutor = Executors.newSingleThreadExecutor()
 
     override val estimatedSize: Long

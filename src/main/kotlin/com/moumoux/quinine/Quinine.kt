@@ -1,6 +1,8 @@
 package com.moumoux.quinine
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.moumoux.quinine.impl.QuinineLocalCache
+import com.moumoux.quinine.impl.QuinineLocalLoadingCache
 import io.reactivex.Single
 
 import com.moumoux.quinine.reactive.QuinineCache as rxQuinineCache
