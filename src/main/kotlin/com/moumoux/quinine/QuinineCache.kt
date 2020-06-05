@@ -16,7 +16,7 @@ import java.util.concurrent.Executors
  * @param K the most general key type this builder will be able to create caches for.
  * @param V the most general value type this builder will be able to create caches for.
  */
-interface QuinineCache<K: Any, V> {
+interface QuinineCache<K : Any, V> {
     val stats: QuinineCacheStats
     val estimatedSize: Long
 
@@ -29,7 +29,7 @@ interface QuinineCache<K: Any, V> {
      * @param key the key whose mapping is to be removed from the cache
      */
     fun invalidate(key: Any)
-    fun invalidateAll(keys: Iterable<*>)
+    fun invalidateAll(keys: Iterable<K>)
     fun invalidateAll()
 
     /**
@@ -87,7 +87,7 @@ interface QuinineCache<K: Any, V> {
      * @return the value to which the specified key is mapped, or <pre>null</pre> if this cache contains
      *         no mapping for the key
      */
-    suspend fun getIfPresent(key: Any): V?
+    suspend fun getIfPresent(key: K): V?
 
     /**
      * Returns a map of the values associated with the [keys] in this cache. The returned map
@@ -98,10 +98,10 @@ interface QuinineCache<K: Any, V> {
      * @param keys the keys whose associated values are to be returned
      * @return the readonly mapping of keys to values for the specified keys found in this cache
      */
-    suspend fun <K1: K>getAllPresent(keys: Iterable<K1>): Map<K, V>
+    suspend fun getAllPresent(keys: Iterable<K>): Map<K, V>
 }
 
-internal open class QuinineLocalCache<K: Any, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
+internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Single<V>>) : QuinineCache<K, V> {
     private val loaderExecutor = Executors.newSingleThreadExecutor()
 
     override val estimatedSize: Long
@@ -112,7 +112,7 @@ internal open class QuinineLocalCache<K: Any, V>(private val cache: Cache<K, Sin
     override fun cleanUp() = cache.cleanUp()
 
     override fun invalidate(key: Any) = cache.invalidate(key)
-    override fun invalidateAll(keys: Iterable<*>) = cache.invalidateAll(keys)
+    override fun invalidateAll(keys: Iterable<K>) = cache.invalidateAll(keys)
     override fun invalidateAll() = cache.invalidateAll()
 
     override fun put(key: K, value: V) = cache.put(key, Single.just(value).cache())
@@ -128,8 +128,8 @@ internal open class QuinineLocalCache<K: Any, V>(private val cache: Cache<K, Sin
         }!!.await()
     }
 
-    override suspend fun getIfPresent(key: Any): V? = cache.getIfPresent(key)?.await()
-    override suspend fun <K1 : K> getAllPresent(keys: Iterable<K1>): Map<K, V> =
+    override suspend fun getIfPresent(key: K): V? = cache.getIfPresent(key)?.await()
+    override suspend fun getAllPresent(keys: Iterable<K>): Map<K, V> =
         cache.getAllPresent(keys).mapValues { it.value.await() }
 
 }
