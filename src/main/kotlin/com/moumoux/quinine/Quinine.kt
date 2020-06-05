@@ -12,6 +12,7 @@ class Quinine<K, V> private constructor() {
     private val caffeine = Caffeine.newBuilder().recordStats()
 
     companion object {
+        @JvmStatic
         fun newBuilder() = Quinine<Any, Any>()
     }
 
