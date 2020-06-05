@@ -6,7 +6,7 @@ import io.reactivex.Single
 import com.moumoux.quinine.reactive.QuinineCache as rxQuinineCache
 import com.moumoux.quinine.reactive.QuinineCache as rxQuinineLoadingCache
 import com.moumoux.quinine.reactive.QuinineLocalCache as rxQuinineLocalCache
-import com.moumoux.quinine.reactive.QuinineLocalCache as rxQuinineLocalLoadingCache
+import com.moumoux.quinine.reactive.QuinineLocalLoadingCache as rxQuinineLocalLoadingCache
 
 class Quinine<K, V> private constructor() {
     private val caffeine = Caffeine.newBuilder().recordStats()
