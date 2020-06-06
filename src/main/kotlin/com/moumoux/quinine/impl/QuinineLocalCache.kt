@@ -4,12 +4,13 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.moumoux.quinine.QuinineCache
 import com.moumoux.quinine.QuinineCacheStats
 import io.reactivex.Single
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.await
-import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 
 internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Single<V>>) :
-    QuinineCache<K, V> {
-    private val loaderExecutor = Executors.newSingleThreadExecutor()
+    QuinineCache<K, V>, CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.IO
 
     override val estimatedSize: Long
         get() = cache.estimatedSize()
@@ -27,12 +28,14 @@ internal open class QuinineLocalCache<K : Any, V>(private val cache: Cache<K, Si
         map.forEach { (k, u) -> cache.put(k, Single.just(u).cache()) }
     }
 
-    override suspend fun get(key: K, mappingFunction: (K) -> V): V {
-        return cache.get(key) {
-            Single.create<V> { emitter ->
-                loaderExecutor.execute { emitter.onSuccess(mappingFunction(it)) }
-            }.cache()
-        }!!.await()
+    override suspend fun get(key: K, mappingFunction: suspend (K) -> V): V {
+        return coroutineScope {
+            cache.get(key) {
+                Single.create<V> { emitter ->
+                    launch { emitter.onSuccess(mappingFunction(it)) }
+                }.cache()
+            }!!.await()
+        }
     }
 
     override suspend fun getIfPresent(key: K): V? = cache.getIfPresent(key)?.await()

@@ -98,7 +98,7 @@ interface QuinineCache<K : Any, V> {
      * @throws RuntimeException or Error if the mappingFunction does so, in which case the mapping is
      *         left unestablished
      */
-    suspend fun get(key: K, mappingFunction: (K) -> V): V
+    suspend fun get(key: K, mappingFunction: suspend (K) -> V): V
 
     /**
      * Returns the value associated with the [key] in this cache, or <pre>null</pre> if there is no
