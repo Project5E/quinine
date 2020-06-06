@@ -29,5 +29,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Copy and adapt the document from `Caffeine` for coroutine part
 
 [Unreleased]: https://github.com/Project5E/quinine/compare/v0.1.0...HEAD
-[0.0.2]: https://github.com/Project5E/quinine/compare/v0.0.1...v0.1.0
+[0.1.0]: https://github.com/Project5E/quinine/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/Project5E/quinine/releases/tag/v0.0.1
