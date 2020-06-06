@@ -1,8 +1,10 @@
 # Quinine
-
 ![build status](https://github.com/Project5E/quinine/workflows/build/badge.svg)
 [![Jitpack](https://jitpack.io/v/com.moumoux/quinine.svg)](https://jitpack.io/#com.moumoux/quinine)
 ![Kotlin 1.3.72](https://img.shields.io/badge/Kotlin-1.3.72-orange)
+<a href="https://github.com/Project5E/quinine/wiki">
+<img align="right" height="90px" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Quinine-2D-skeletal.png">
+</a>
 
 So far, it's a Kotlin cache library using [Caffeine](https://github.com/ben-manes/caffeine)
 as backend which might be change in the future.
