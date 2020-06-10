@@ -1,6 +1,5 @@
 package com.moumoux.quinine
 
-import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
