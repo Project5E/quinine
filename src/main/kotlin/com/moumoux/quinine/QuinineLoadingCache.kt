@@ -1,5 +1,7 @@
 package com.moumoux.quinine
 
+import io.reactivex.Observable
+
 /**
  * A semi-persistent mapping from keys to values. Values are automatically loaded by the cache,
  * and are stored in the cache until either evicted or manually invalidated.
@@ -75,4 +77,6 @@ interface QuinineLoadingCache<K: Any, V> : QuinineCache<K, V> {
      * @param key key with which a value may be associated
      */
     fun refresh(key: K)
+
+    fun subscribeUpdate(channel: Observable<K>)
 }

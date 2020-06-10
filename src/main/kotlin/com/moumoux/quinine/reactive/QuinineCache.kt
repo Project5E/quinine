@@ -1,6 +1,7 @@
 package com.moumoux.quinine.reactive
 
 import com.moumoux.quinine.QuinineCacheStats
+import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -124,6 +125,10 @@ interface QuinineCache<K : Any, V> {
      */
     fun getAllPresent(keys: Iterable<K>): Map<K, Single<V>>
 
+    fun subscribeInvalidate(channel: Observable<K>)
+    fun <T : Any> subscribeInvalidate(channel: Observable<T>, transformer: (T) -> K)
+    fun <T : Any> subscribeUpdate(channel: Observable<T>, transformer: (T) -> Pair<K, V>)
+    fun unsubscribe(channel: Observable<*>)
 
     /**
      * Performs any pending maintenance operations needed by the cache. Exactly which activities are

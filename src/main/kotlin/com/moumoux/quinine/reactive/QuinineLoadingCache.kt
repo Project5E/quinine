@@ -1,5 +1,6 @@
 package com.moumoux.quinine.reactive
 
+import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -77,4 +78,6 @@ interface QuinineLoadingCache<K : Any, V> : QuinineCache<K, V> {
      * @param key key with which a value may be associated
      */
     fun refresh(key: K)
+
+    fun subscribeUpdate(channel: Observable<K>)
 }

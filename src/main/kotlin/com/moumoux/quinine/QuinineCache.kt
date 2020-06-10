@@ -1,5 +1,7 @@
 package com.moumoux.quinine
 
+import io.reactivex.Observable
+
 /**
  * A semi-persistent mapping from keys to values. Cache entries are manually added using
  * [get] or [put], and are stored in the cache until either evicted or manually invalidated.
@@ -37,7 +39,7 @@ interface QuinineCache<K : Any, V> {
      *
      * @param key the key whose mapping is to be removed from the cache
      */
-    fun invalidate(key: Any)
+    fun invalidate(key: K)
 
     /**
      * Discards any cached values for the [keys]. The behavior of this operation is undefined
@@ -120,6 +122,11 @@ interface QuinineCache<K : Any, V> {
      * @return the readonly mapping of keys to values for the specified keys found in this cache
      */
     suspend fun getAllPresent(keys: Iterable<K>): Map<K, V>
+
+    fun subscribeInvalidate(channel: Observable<K>)
+    fun <T : Any> subscribeInvalidate(channel: Observable<T>, transformer: (T) -> K)
+    fun <T : Any> subscribeUpdate(channel: Observable<T>, transformer: (T) -> Pair<K, V>)
+    fun unsubscribe(channel: Observable<*>)
 
     /**
      * Performs any pending maintenance operations needed by the cache. Exactly which activities are

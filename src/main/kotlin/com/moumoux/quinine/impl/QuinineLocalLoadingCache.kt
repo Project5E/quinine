@@ -2,6 +2,7 @@ package com.moumoux.quinine.impl
 
 import com.github.benmanes.caffeine.cache.LoadingCache
 import com.moumoux.quinine.QuinineLoadingCache
+import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
 
@@ -14,5 +15,9 @@ internal class QuinineLocalLoadingCache<K: Any, V>(private val cache: LoadingCac
         cache.getAll(keys).mapValues { it.value.await() }
 
     override fun refresh(key: K) = cache.refresh(key)
+
+    override fun subscribeUpdate(channel: Observable<K>) {
+        subscriptions[channel] = channel.subscribe { refresh(it) }
+    }
 
 }
