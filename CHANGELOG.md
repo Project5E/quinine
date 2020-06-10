@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add rxjava `Observable` for invalidate and update cache notify
+  ```kotlin
+    fun subscribeInvalidate(channel: Observable<K>)
+    fun <T : Any> subscribeInvalidate(channel: Observable<T>, transformer: (T) -> K)
+    fun <T : Any> subscribeUpdate(channel: Observable<T>, transformer: (T) -> Pair<K, V>)
+    fun unsubscribe(channel: Observable<*>)
+    // for loading cache
+    fun subscribeUpdate(channel: Observable<K>)
+  ```
 
 ## [0.2.0] - 2020-06-09
 ### Changed
