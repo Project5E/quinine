@@ -1,5 +1,6 @@
 package com.moumoux.quinine
 
+import com.moumoux.quinine.suspend.Cache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -11,7 +12,7 @@ import kotlin.random.Random
 
 class TestQuinineCache {
 
-    private val cache: QuinineCache<Int, Int> = Quinine
+    private val cache: Cache<Int, Int> = Quinine
         .newBuilder()
         .maximumSize(500)
         .build()

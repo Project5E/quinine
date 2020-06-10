@@ -1,6 +1,6 @@
 package com.moumoux.quinine
 
-import com.moumoux.quinine.reactive.QuinineCache
+import com.moumoux.quinine.reactive.Cache
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -17,7 +17,7 @@ import kotlin.random.Random
 class RxTestQuinineCache {
 
     private val loaderExecutor = Executors.newSingleThreadExecutor()
-    private val cache: QuinineCache<Int, Int> = Quinine
+    private val cache: Cache<Int, Int> = Quinine
         .newBuilder()
         .maximumSize(500)
         .rxBuild()
