@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     fun subscribeUpdate(channel: Observable<K>)
   ```
 
+### Changed
+- `QuinineCache` changes to `Cache`
+- `QuinineLoadingCache` changes to `LoadingCache`
+- `QuinineCacheStats` changes to `CacheStats`
+
 ## [0.2.0] - 2020-06-09
 ### Changed
 - the coroutine cache get method changes to suspend function 
