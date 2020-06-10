@@ -17,7 +17,7 @@ import com.moumoux.quinine.reactive.impl.LoadingCacheDelegate as rxLoadingCacheD
 /**
  * A builder for [Cache], [LoadingCache], [rxCache], [rxLoadingCacheDelegate].
  * LoadingCache can automatic load entries into the cache, typically asynchronously.
- * By default, [Quinine] enables the stats recording which can be access through [QuinineCache.stats].
+ * By default, [Quinine] enables the stats recording which can be access through [Cache.stats].
  * Usage example:
  * <pre>
  *     val cache: QuinineCache<Int, Int> = Quinine
@@ -33,7 +33,7 @@ import com.moumoux.quinine.reactive.impl.LoadingCacheDelegate as rxLoadingCacheD
  *         .build { load(it) }
  * </pre>
  *
- * So far, the backend of [QuinineCache] is Caffeine which might changes in future.
+ * So far, the backend of [Cache] is Caffeine which might changes in future.
  *
  * @author light.tsing@gmail.com (Akase Cho)
  * @param K the most general key type this builder will be able to create caches for.
@@ -65,7 +65,7 @@ class Quinine<K: Any, V> private constructor() {
     /**
      * Build a coroutine style cache
      *
-     * @return [QuinineCache] instance
+     * @return [Cache] instance
      */
     fun <K1 : K, V1 : V?> build(): Cache<K1, V1> {
         return CacheDelegate(caffeine.build())
@@ -74,7 +74,7 @@ class Quinine<K: Any, V> private constructor() {
     /**
      * Build a coroutine style cache with a loader
      *
-     * @return [QuinineLoadingCache] instance
+     * @return [LoadingCache] instance
      */
     fun <K1 : K, V1 : V?> build(mappingFunction: suspend (K1) -> V1): LoadingCache<K1, V1> {
         return LoadingCacheDelegate(caffeine.build {
