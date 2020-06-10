@@ -21,9 +21,9 @@ interface QuinineCache<K : Any, V> {
      * Due to the performance penalty of maintaining statistics, some implementations may not record
      * the usage history immediately or at all.
      *
-     * @return [QuinineCacheStats] snapshot instance
+     * @return [CacheStats] snapshot instance
      */
-    val stats: QuinineCacheStats
+    val stats: CacheStats
 
     /**
      * Returns the approximate number of entries in this cache. The value returned is an estimate; the

@@ -1,20 +1,8 @@
 package com.moumoux.quinine.reactive
 
-import io.reactivex.Observable
 import io.reactivex.Single
 
-/**
- * A semi-persistent mapping from keys to values. Values are automatically loaded by the cache,
- * and are stored in the cache until either evicted or manually invalidated.
- * <p>
- * Implementations of this interface are expected to be thread-safe, and can be safely accessed
- * by multiple concurrent threads.
- *
- * @author light.tsing@gmail.com (Akase Cho)
- * @param K the most general key type this builder will be able to create caches for.
- * @param V the most general value type this builder will be able to create caches for.
- */
-interface QuinineLoadingCache<K : Any, V> : QuinineCache<K, V> {
+interface LoadingCache<K: Any, V>: Cache<K, V> {
     /**
      * Returns the value associated with the [key] in this cache, obtaining that value from
      * loader if necessary.
@@ -78,6 +66,4 @@ interface QuinineLoadingCache<K : Any, V> : QuinineCache<K, V> {
      * @param key key with which a value may be associated
      */
     fun refresh(key: K)
-
-    fun subscribeUpdate(channel: Observable<K>)
 }

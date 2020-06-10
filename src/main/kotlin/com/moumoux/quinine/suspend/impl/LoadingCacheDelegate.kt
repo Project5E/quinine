@@ -1,14 +1,14 @@
-package com.moumoux.quinine.impl
+package com.moumoux.quinine.suspend.impl
 
-import com.github.benmanes.caffeine.cache.LoadingCache
-import com.moumoux.quinine.QuinineLoadingCache
+import com.moumoux.quinine.suspend.LoadingCache
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
+import com.github.benmanes.caffeine.cache.LoadingCache as CaffeineLoadingCache
 
-internal class QuinineLocalLoadingCache<K: Any, V>(private val cache: LoadingCache<K, Single<V>>) :
-    QuinineLocalCache<K, V>(cache),
-    QuinineLoadingCache<K, V> {
+
+class LoadingCacheDelegate<K: Any, V>(override val cache: CaffeineLoadingCache<K, Single<V>>) : CacheDelegate<K, V>(cache),
+    LoadingCache<K, V> {
     override suspend fun get(key: K): V = cache.get(key)!!.await()
 
     override suspend fun getAll(keys: Iterable<K>): Map<K, V> =
@@ -17,7 +17,6 @@ internal class QuinineLocalLoadingCache<K: Any, V>(private val cache: LoadingCac
     override fun refresh(key: K) = cache.refresh(key)
 
     override fun subscribeUpdate(channel: Observable<K>) {
-        subscriptions[channel] = channel.subscribe { refresh(it) }
+        notifyCacheDelegate.subscriptions[channel] = channel.subscribe { refresh(it) }
     }
-
 }

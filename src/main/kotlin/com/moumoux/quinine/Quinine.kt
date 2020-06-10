@@ -1,19 +1,21 @@
 package com.moumoux.quinine
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.moumoux.quinine.impl.QuinineLocalCache
-import com.moumoux.quinine.impl.QuinineLocalLoadingCache
+import com.moumoux.quinine.suspend.Cache
+import com.moumoux.quinine.suspend.LoadingCache
+import com.moumoux.quinine.suspend.impl.CacheDelegate
+import com.moumoux.quinine.suspend.impl.LoadingCacheDelegate
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-import com.moumoux.quinine.reactive.QuinineCache as rxQuinineCache
-import com.moumoux.quinine.reactive.QuinineLoadingCache as rxQuinineLoadingCache
-import com.moumoux.quinine.reactive.impl.QuinineLocalCache as rxQuinineLocalCache
-import com.moumoux.quinine.reactive.impl.QuinineLocalLoadingCache as rxQuinineLocalLoadingCache
+import com.moumoux.quinine.reactive.Cache as rxCache
+import com.moumoux.quinine.reactive.LoadingCache as rxLoadingCache
+import com.moumoux.quinine.reactive.impl.CacheDelegate as rxCacheDelegate
+import com.moumoux.quinine.reactive.impl.LoadingCacheDelegate as rxLoadingCacheDelegate
 
 /**
- * A builder for [QuinineCache], [QuinineLoadingCache], [rxQuinineCache], [rxQuinineLoadingCache].
+ * A builder for [Cache], [LoadingCache], [rxCache], [rxLoadingCacheDelegate].
  * LoadingCache can automatic load entries into the cache, typically asynchronously.
  * By default, [Quinine] enables the stats recording which can be access through [QuinineCache.stats].
  * Usage example:
@@ -65,8 +67,8 @@ class Quinine<K: Any, V> private constructor() {
      *
      * @return [QuinineCache] instance
      */
-    fun <K1 : K, V1 : V?> build(): QuinineCache<K1, V1> {
-        return QuinineLocalCache(caffeine.build())
+    fun <K1 : K, V1 : V?> build(): Cache<K1, V1> {
+        return CacheDelegate(caffeine.build())
     }
 
     /**
@@ -74,8 +76,8 @@ class Quinine<K: Any, V> private constructor() {
      *
      * @return [QuinineLoadingCache] instance
      */
-    fun <K1 : K, V1 : V?> build(mappingFunction: suspend (K1) -> V1): QuinineLoadingCache<K1, V1> {
-        return QuinineLocalLoadingCache(caffeine.build {
+    fun <K1 : K, V1 : V?> build(mappingFunction: suspend (K1) -> V1): LoadingCache<K1, V1> {
+        return LoadingCacheDelegate(caffeine.build {
             Single.create<V1> { emitter ->
                 GlobalScope.launch { emitter.onSuccess(mappingFunction(it)) }
             }.cache()
@@ -85,19 +87,19 @@ class Quinine<K: Any, V> private constructor() {
     /**
      * Build a reactive style cache
      *
-     * @return [rxQuinineCache] instance
+     * @return [rxCache] instance
      */
-    fun <K1 : K, V1 : V?> rxBuild(): rxQuinineCache<K1, V1> {
-        return rxQuinineLocalCache(caffeine.build())
+    fun <K1 : K, V1 : V?> rxBuild(): rxCache<K1, V1> {
+        return rxCacheDelegate(caffeine.build())
     }
 
     /**
      * Build a reactive style cache with a loader
      *
-     * @return [rxQuinineLoadingCache] instance
+     * @return [rxLoadingCache] instance
      */
-    fun <K1 : K, V1 : V?> rxBuild(mappingFunction: (K1) -> Single<V1>): rxQuinineLoadingCache<K1, V1> {
-        return rxQuinineLocalLoadingCache(caffeine.build(mappingFunction))
+    fun <K1 : K, V1 : V?> rxBuild(mappingFunction: (K1) -> Single<V1>): rxLoadingCache<K1, V1> {
+        return rxLoadingCacheDelegate(caffeine.build(mappingFunction))
     }
 
 }

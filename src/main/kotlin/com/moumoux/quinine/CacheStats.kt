@@ -1,8 +1,8 @@
 package com.moumoux.quinine
 
-import com.github.benmanes.caffeine.cache.stats.CacheStats
+import com.github.benmanes.caffeine.cache.stats.CacheStats as CaffeineStats
 
-data class QuinineCacheStats(val hitCount: Long, val missCount: Long) {
+data class CacheStats(val hitCount: Long, val missCount: Long) {
 
     val hitRate: Double
         get() = hitCount.toDouble() / (missCount + hitCount).toDouble()
@@ -11,8 +11,8 @@ data class QuinineCacheStats(val hitCount: Long, val missCount: Long) {
 
     companion object {
         @JvmStatic
-        fun from(stats: CacheStats): QuinineCacheStats {
-            return QuinineCacheStats(stats.hitCount(), stats.missCount())
+        fun from(stats: CaffeineStats): CacheStats {
+            return CacheStats(stats.hitCount(), stats.missCount())
         }
     }
 }
