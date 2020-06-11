@@ -79,7 +79,13 @@ class Quinine<K: Any, V> private constructor() {
     fun <K1 : K, V1 : V?> build(mappingFunction: suspend (K1) -> V1): LoadingCache<K1, V1> {
         return LoadingCacheDelegate(caffeine.build {
             Single.create<V1> { emitter ->
-                GlobalScope.launch { emitter.onSuccess(mappingFunction(it)) }
+                GlobalScope.launch {
+                    try {
+                        emitter.onSuccess(mappingFunction(it))
+                    } catch (e: Throwable) {
+                        emitter.onError(e)
+                    }
+                }
             }.cache()
         })
     }
