@@ -9,6 +9,7 @@ import com.moumoux.quinine.common.impl.NotifyCacheDelegate
 import com.moumoux.quinine.suspend.Cache
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
@@ -31,9 +32,16 @@ open class CacheDelegate<K : Any, V>(
         return coroutineScope {
             cache.get(key) {
                 Single.create<V> { emitter ->
-                    launch { emitter.onSuccess(mappingFunction(it)) }
+                    launch {
+                        try {
+                            emitter.onSuccess(mappingFunction(it))
+                        } catch (e: Throwable) {
+                            emitter.onError(e)
+                        }
+                    }
                 }.cache()
             }!!.await()
+
         }
     }
 
